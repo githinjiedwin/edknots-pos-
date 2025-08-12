@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EdKnots POS</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fffaf5;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(to right, #f67280, #c06c84);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    header img {
+      height: 60px;
+      border-radius: 12px;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin: 10px 0 5px;
+      text-shadow: 0 0 8px #ffc1cc, 0 0 16px #f67280;
+    }
+    header p {
+      font-style: italic;
+      margin: 0;
+    }
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .form-section input, .form-section select {
+      padding: 12px;
+      margin: 8px 5px;
+      border: 2px solid #f8c3d0;
+      border-radius: 8px;
+      width: 18%;
+    }
+    .form-section button {
+      background-color: #f67280;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #f8c3d0;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #fce4ec;
+      color: #c06c84;
+    }
+    .summary {
+      text-align: right;
+      margin-top: 20px;
+      font-size: 1.1rem;
+    }
+    .checkout button {
+      background-color: #c06c84;
+      color: white;
+      padding: 14px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 25px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    #receipt {
+      display: none;
+    }
+    .inventory-section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 2px dashed #f8c3d0;
+      border-radius: 12px;
+      background-color: #fff0f5;
+    }
+    .inventory-section h3 {
+      margin-top: 0;
+      color: #c06c84;
+    }
+    .inventory-section input {
+      width: 25%;
+      padding: 10px;
+      margin: 8px 5px;
+      border-radius: 8px;
+      border: 2px solid #f8c3d0;
+    }
+    .inventory-section button {
+      background-color: #c06c84;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .sales-section {
+      margin-top: 40px;
+      border-top: 3px solid #f8c3d0;
+      padding-top: 20px;
+    }
+    .sales-section h3 {
+      color: #c06c84;
+    }
+/* Default print styles - hide everything */
+@media print {
+  body {
+    background: white;
+  }
+  body * {
+    display: none !important;
+  }
+
+  /* Print receipt only */
+  body.print-receipt #receipt,
+  body.print-receipt #receipt * {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Print sales only */
+  body.print-sales #salesHistory,
+  body.print-sales #salesHistory * {
+    display: table !important;
+    visibility: visible !important;
+  }
+
+  /* Print inventory only */
+  body.print-inventory #inventoryTable,
+  body.print-inventory #inventoryTable * {
+    display: table !important;
+    visibility: visible !important;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid black;
+    padding: 6px;
+  }
+}
+/* Receipt-specific print styles */
+@media print {
+  body.print-receipt {
+    background: white;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+  }
+
+  body.print-receipt #receipt {
+    max-width: 300px;
+    margin: auto;
+    border: 1px dashed #000;
+    padding: 10px;
+  }
+
+  body.print-receipt #receipt h2 {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+
+  body.print-receipt #receipt img {
+    display: block;
+    margin: 0 auto 5px;
+    height: 50px;
+  }
+
+  body.print-receipt #receipt p {
+    text-align: center;
+    margin: 2px 0;
+  }
+
+  body.print-receipt #receipt table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  body.print-receipt #receipt th,
+  body.print-receipt #receipt td {
+    padding: 4px;
+    border-bottom: 1px dotted #000;
+    text-align: left;
+  }
+
+  body.print-receipt #receipt h3 {
+    text-align: right;
+    margin-top: 5px;
+  }
+
+  body.print-receipt #receipt .footer {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 12px;
+    border-top: 1px dashed #000;
+    padding-top: 5px;
+  }
+}
+
+
+  </style>
+</head>
+<body>
+  <header>
+    <img src="edknots-logo.png" alt="EdKnots Logo">
+    <h1>EdKnots POS</h1>
+    <p>"House of Githinji"</p>
+  </header>
+  <main>
+    <!-- Inventory Management -->
+    <div class="inventory-section">
+      <h3>Inventory Management</h3>
+      <input type="text" id="invName" placeholder="Product Name">
+      <input type="number" id="invPrice" placeholder="Price">
+      <input type="number" id="invStock" placeholder="Stock">
+      <button onclick="addToInventory()">Add/Update</button>
+      <button onclick="printInventory()">🖨️ Print Inventory</button>
+      <p id="invMessage"></p>
+
+      <table id="inventoryTable">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Cart Section -->
+    <div class="form-section">
+      <input type="text" id="product" placeholder="Product Name">
+      <input type="number" id="price" placeholder="Price">
+      <input type="number" id="qty" placeholder="Qty">
+      <select id="payment">
+        <option value="Cash">Cash</option>
+        <option value="M-Pesa">M-Pesa</option>
+      </select>
+      <button onclick="addItem()">Add</button>
+    </div>
+
+    <table id="cartTable">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Total</th>
+          <th class="no-print">Remove</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="summary">
+      <p><strong>Total:</strong> KSh <span id="total">0.00</span></p>
+      <p><strong>Payment Method:</strong> <span id="paymentMethod">Cash</span></p>
+    </div>
+
+    <div class="checkout">
+      <button onclick="checkout()">Checkout & Print</button>
+    </div>
+
+    <!-- Sales History -->
+    <div class="sales-section">
+      <h3>Sales History</h3>
+      <button class="no-print" onclick="viewSales()">📄 View Sales</button>
+      <button class="no-print" onclick="printSales()">🖨️ Print Sales</button>
+      <table id="salesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Payment</th>
+            <th>Total</th>
+            <th>Items</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+<div id="receipt">
+  <img src="edknots-logo.png.png" alt="EdKnots Logo">
+  <h2>EdKnots Creations</h2>
+  <p>House of Githinji</p>
+  <p>Tel: 0725173636</p>
+  <p><strong>Date:</strong> <span id="receiptDate"></span></p>
+  <p><strong>Payment:</strong> <span id="receiptPayment"></span></p>
+  <table id="receiptTable">
+    <thead>
+      <tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <h3>Grand Total: KSh <span id="receiptTotal"></span></h3>
+  <p class="footer">Thank you for shopping with us!</p>
+</div>
+
+
+  <script>
+    let cart = [];
+    let inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+    let sales = JSON.parse(localStorage.getItem('sales') || '[]');
+    cart = JSON.parse(localStorage.getItem('cart') || '[]');
+updateCart();
+
+    function addToInventory() {
+      const name = document.getElementById('invName').value.trim();
+      const price = parseFloat(document.getElementById('invPrice').value);
+      const stock = parseInt(document.getElementById('invStock').value);
+      if (!name || isNaN(price) || isNaN(stock)) {
+        alert('Enter valid product details');
+        return;
+      }
+      const index = inventory.findIndex(item => item.name === name);
+      if (index > -1) {
+        inventory[index].price = price;
+        inventory[index].stock += stock;
+      } else {
+        inventory.push({ name, price, stock });
+      }
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      displayInventory();
+      document.getElementById('invMessage').innerText = `${name} saved with stock ${stock}`;
+    }
+
+    function deleteInventory(index) {
+      if (confirm(`Delete "${inventory[index].name}" from inventory?`)) {
+        inventory.splice(index, 1);
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        displayInventory();
+      }
+    }
+
+    function editInventory(index) {
+      const item = inventory[index];
+      const newStock = prompt(`Update stock for ${item.name}:`, item.stock);
+      const newPrice = prompt(`Update price for ${item.name}:`, item.price);
+      if (newStock !== null && newPrice !== null) {
+        inventory[index].stock = parseInt(newStock);
+        inventory[index].price = parseFloat(newPrice);
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        displayInventory();
+      }
+    }
+
+    function addItem() {
+      const product = document.getElementById('product').value.trim();
+      const price = parseFloat(document.getElementById('price').value);
+      const qty = parseInt(document.getElementById('qty').value);
+      const payment = document.getElementById('payment').value;
+
+      if (!product || isNaN(price) || isNaN(qty)) {
+        alert('Enter valid details');
+        return;
+      }
+
+      cart.push({ product, price, qty, total: price * qty });
+      document.getElementById('paymentMethod').innerText = payment;
+      updateCart();
+    }
+
+    function updateCart() {
+  const tbody = document.querySelector('#cartTable tbody');
+  tbody.innerHTML = '';
+  let total = 0;
+  cart.forEach((item, i) => {
+    total += item.total;
+    tbody.innerHTML += `<tr>
+      <td>${item.product}</td>
+      <td>${item.price.toFixed(2)}</td>
+      <td>${item.qty}</td>
+      <td>${item.total.toFixed(2)}</td>
+      <td class="no-print"><button onclick="removeItem(${i})">❌</button></td>
+    </tr>`;
+  });
+  document.getElementById('total').innerText = total.toFixed(2);
+
+  // ✅ Save updated cart to localStorage every time it changes
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function displayInventory() {
+      const tbody = document.querySelector('#inventoryTable tbody');
+      tbody.innerHTML = '';
+      inventory.forEach((item, i) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.price.toFixed(2)}</td>
+            <td>${item.stock}</td>
+            <td>
+              <button onclick="editInventory(${i})">Edit</button>
+              <button onclick="deleteInventory(${i})" style="background-color:#f44336;color:white;">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+function checkout() {
+  const tbody = document.querySelector('#receiptTable tbody');
+  tbody.innerHTML = '';
+  let total = 0;
+  cart.forEach(item => {
+    total += item.total;
+    tbody.innerHTML += `<tr>
+      <td>${item.product}</td>
+      <td>${item.qty}</td>
+      <td>${item.price.toFixed(2)}</td>
+      <td>${item.total.toFixed(2)}</td>
+    </tr>`;
+  });
+  document.getElementById('receiptPayment').innerText = document.getElementById('payment').value;
+  document.getElementById('receiptTotal').innerText = total.toFixed(2);
+  document.getElementById('receiptDate').innerText = new Date().toLocaleString();
+
+  // Save sale to history
+  sales.push({
+    date: new Date().toLocaleString(),
+    payment: document.getElementById('payment').value,
+    total: total,
+    items: [...cart]
+  });
+  localStorage.setItem('sales', JSON.stringify(sales));
+
+  // ✅ Use the new targeted print function
+  printReceipt();
+
+  cart = [];
+  updateCart();
+  localStorage.removeItem('cart');
+
+}
+
+
+    function viewSales() {
+      const tbody = document.querySelector('#salesTable tbody');
+      tbody.innerHTML = '';
+      sales.forEach(sale => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${sale.date}</td>
+            <td>${sale.payment}</td>
+            <td>${sale.total.toFixed(2)}</td>
+            <td>${sale.items.map(i => `${i.product}(${i.qty})`).join(", ")}</td>
+          </tr>
+        `;
+      });
+    }
+
+ function printReceipt() {
+  document.body.classList.add("print-receipt");
+  window.print();
+  document.body.classList.remove("print-receipt");
+}
+
+function printSales() {
+  document.body.classList.add("print-sales");
+  window.print();
+  document.body.classList.remove("print-sales");
+}
+
+function printInventoryOnly() {
+  document.body.classList.add("print-inventory");
+  window.print();
+  document.body.classList.remove("print-inventory");
+}
+function printInventory() {
+  printInventoryOnly();
+}
+
+
+    displayInventory();
+    viewSales();
+  </script>
+
+</body>
+</html>
