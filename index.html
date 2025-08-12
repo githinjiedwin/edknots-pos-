@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EdKnots POS</title>
-  <style>
+  <title>EdKnots Creations POS</title>
+<style>
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -119,106 +119,123 @@
     .sales-section h3 {
       color: #c06c84;
     }
-/* Default print styles - hide everything */
-@media print {
-  body {
-    background: white;
-  }
-  body * {
-    display: none !important;
-  }
 
-  /* Print receipt only */
-  body.print-receipt #receipt,
-  body.print-receipt #receipt * {
-    display: block !important;
-    visibility: visible !important;
-  }
+    /* === MERGED PRINT STYLES === */
+    @media print {
+      body {
+        background: white;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid black;
+        padding: 10px;
+        font-size: 16px; /* Bigger text for readability */
+      }
 
-  /* Print sales only */
-  body.print-sales #salesHistory,
-  body.print-sales #salesHistory * {
-    display: table !important;
-    visibility: visible !important;
-  }
+      /* Make important columns bolder and bigger */
+      #inventoryTable th:nth-child(1),
+      #inventoryTable td:nth-child(1), /* Product */
+      #inventoryTable th:nth-child(2),
+      #inventoryTable td:nth-child(2), /* Price */
+      #inventoryTable th:nth-child(3),
+      #inventoryTable td:nth-child(3), /* Stock */
+      #salesTable th,
+      #salesTable td {
+        font-size: 18px;
+        font-weight: bold;
+      }
 
-  /* Print inventory only */
-  body.print-inventory #inventoryTable,
-  body.print-inventory #inventoryTable * {
-    display: table !important;
-    visibility: visible !important;
-  }
+      /* === INVENTORY PRINT === */
+      body.print-inventory main > *:not(.inventory-section) {
+        display: none !important;
+      }
+      body.print-inventory .inventory-section {
+        display: block !important;
+      }
+      body.print-inventory #inventoryTable th:last-child,
+      body.print-inventory #inventoryTable td:last-child {
+        display: none !important; /* Hide Actions column */
+      }
+      body.print-inventory {
+        @page { size: landscape; margin: 10mm; }
+      }
 
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  th, td {
-    border: 1px solid black;
-    padding: 6px;
-  }
+      /* === SALES PRINT === */
+      body.print-sales main > *:not(.sales-section) {
+        display: none !important;
+      }
+      body.print-sales .sales-section {
+        display: block !important;
+      }
+      body.print-sales {
+        @page { size: landscape; margin: 10mm; }
+      }
+
+      /* === RECEIPT PRINT === */
+      body.print-receipt main,
+      body.print-receipt header {
+        display: none !important;
+      }
+      body.print-receipt #receipt {
+        display: block !important;
+        max-width: 300px;
+        margin: auto;
+        border: 1px dashed #000;
+        padding: 10px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+      }
+      body.print-receipt #receipt img {
+        display: block;
+        margin: 0 auto 5px;
+        height: 50px;
+      }
+      body.print-receipt #receipt h2 {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 5px;
+      }
+      body.print-receipt #receipt p {
+        text-align: center;
+        margin: 2px 0;
+      }
+      body.print-receipt #receipt table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      body.print-receipt #receipt th,
+      body.print-receipt #receipt td {
+        padding: 4px;
+        border-bottom: 1px dotted #000;
+        text-align: left;
+      }
+      body.print-receipt #receipt h3 {
+        text-align: right;
+        margin-top: 5px;
+      }
+      body.print-receipt #receipt .footer {
+        text-align: center;
+        margin-top: 10px;
+        font-size: 12px;
+        border-top: 1px dashed #000;
+        padding-top: 5px;
+      }
+      body.print-receipt {
+        @page { size: portrait; margin: 10mm; }
+      }
+    }
+    @page {
+  margin: 10mm;
+  /* Try to hide headers/footers in browsers that support it */
+  marks: none;
+  size: auto;
 }
-/* Receipt-specific print styles */
-@media print {
-  body.print-receipt {
-    background: white;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-  }
 
-  body.print-receipt #receipt {
-    max-width: 300px;
-    margin: auto;
-    border: 1px dashed #000;
-    padding: 10px;
-  }
-
-  body.print-receipt #receipt h2 {
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 5px;
-  }
-
-  body.print-receipt #receipt img {
-    display: block;
-    margin: 0 auto 5px;
-    height: 50px;
-  }
-
-  body.print-receipt #receipt p {
-    text-align: center;
-    margin: 2px 0;
-  }
-
-  body.print-receipt #receipt table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-
-  body.print-receipt #receipt th,
-  body.print-receipt #receipt td {
-    padding: 4px;
-    border-bottom: 1px dotted #000;
-    text-align: left;
-  }
-
-  body.print-receipt #receipt h3 {
-    text-align: right;
-    margin-top: 5px;
-  }
-
-  body.print-receipt #receipt .footer {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 12px;
-    border-top: 1px dashed #000;
-    padding-top: 5px;
-  }
-}
-
-
-  </style>
+</style>
 </head>
 <body>
   <header>
@@ -233,7 +250,7 @@
       <input type="text" id="invName" placeholder="Product Name">
       <input type="number" id="invPrice" placeholder="Price">
       <input type="number" id="invStock" placeholder="Stock">
-      <button onclick="addToInventory()">Add/Update</button>
+      <button type="button" onclick="addToInventory()">Add/Update</button>
       <button onclick="printInventory()">🖨️ Print Inventory</button>
       <p id="invMessage"></p>
 
@@ -252,7 +269,9 @@
 
     <!-- Cart Section -->
     <div class="form-section">
-      <input type="text" id="product" placeholder="Product Name">
+     <select id="product" onchange="autoFillPrice()">
+  <option value="">Select Product</option>
+</select>
       <input type="number" id="price" placeholder="Price">
       <input type="number" id="qty" placeholder="Qty">
       <select id="payment">
@@ -288,6 +307,7 @@
     <div class="sales-section">
       <h3>Sales History</h3>
       <button class="no-print" onclick="viewSales()">📄 View Sales</button>
+      <button class="no-print" onclick="clearSales()">🗑️ Clear Sales</button>
       <button class="no-print" onclick="printSales()">🖨️ Print Sales</button>
       <table id="salesTable">
         <thead>
@@ -304,7 +324,7 @@
   </main>
 
 <div id="receipt">
-  <img src="edknots-logo.png.png" alt="EdKnots Logo">
+  <img src="edknots-logo.png" alt="EdKnots Logo">
   <h2>EdKnots Creations</h2>
   <p>House of Githinji</p>
   <p>Tel: 0725173636</p>
@@ -325,28 +345,58 @@
     let cart = [];
     let inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
     let sales = JSON.parse(localStorage.getItem('sales') || '[]');
-    cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    // Load cart from localStorage
+cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+// ✅ Filter out products not in inventory
+cart = cart.filter(item => inventory.some(inv => inv.name === item.product));
+
+// Save filtered cart back
+localStorage.setItem('cart', JSON.stringify(cart));
+
+// Update cart display
 updateCart();
 
+
     function addToInventory() {
-      const name = document.getElementById('invName').value.trim();
-      const price = parseFloat(document.getElementById('invPrice').value);
-      const stock = parseInt(document.getElementById('invStock').value);
-      if (!name || isNaN(price) || isNaN(stock)) {
-        alert('Enter valid product details');
-        return;
-      }
-      const index = inventory.findIndex(item => item.name === name);
-      if (index > -1) {
-        inventory[index].price = price;
-        inventory[index].stock += stock;
-      } else {
-        inventory.push({ name, price, stock });
-      }
-      localStorage.setItem('inventory', JSON.stringify(inventory));
-      displayInventory();
-      document.getElementById('invMessage').innerText = `${name} saved with stock ${stock}`;
-    }
+  console.log('addToInventory called');
+  const nameEl = document.getElementById('invName');
+  const priceEl = document.getElementById('invPrice');
+  const stockEl = document.getElementById('invStock');
+
+  const name = nameEl.value.trim();
+  const price = parseFloat(priceEl.value);
+  const stock = parseInt(stockEl.value);
+
+  console.log({ name, price, stock, inventoryBefore: inventory });
+
+  if (!name || isNaN(price) || isNaN(stock)) {
+    alert('Enter valid product details');
+    return;
+  }
+
+  // ensure inventory is an array
+  if (!Array.isArray(inventory)) inventory = [];
+
+  const index = inventory.findIndex(item => item.name === name);
+  if (index > -1) {
+    inventory[index].price = price;
+    inventory[index].stock += stock;
+    console.log(`Updated existing ${name}`, inventory[index]);
+  } else {
+    inventory.push({ name, price, stock });
+    console.log(`Added new product ${name}`);
+  }
+
+  localStorage.setItem('inventory', JSON.stringify(inventory));
+  displayInventory();
+
+  // show message and clear inputs
+  document.getElementById('invMessage').innerText = `${name} saved with stock ${stock}`;
+  nameEl.value = '';
+  priceEl.value = '';
+  stockEl.value = '';
+}
 
     function deleteInventory(index) {
       if (confirm(`Delete "${inventory[index].name}" from inventory?`)) {
@@ -368,21 +418,40 @@ updateCart();
       }
     }
 
-    function addItem() {
-      const product = document.getElementById('product').value.trim();
-      const price = parseFloat(document.getElementById('price').value);
-      const qty = parseInt(document.getElementById('qty').value);
-      const payment = document.getElementById('payment').value;
+  function addItem() {
+  const product = document.getElementById('product').value.trim();
+  const price = parseFloat(document.getElementById('price').value);
+  const qty = parseInt(document.getElementById('qty').value);
+  const payment = document.getElementById('payment').value;
 
-      if (!product || isNaN(price) || isNaN(qty)) {
-        alert('Enter valid details');
-        return;
-      }
+  if (!product || isNaN(price) || isNaN(qty)) {
+    alert('Enter valid details');
+    return;
+  }
 
-      cart.push({ product, price, qty, total: price * qty });
-      document.getElementById('paymentMethod').innerText = payment;
-      updateCart();
+  // ✅ Check inventory for stock availability
+  const invIndex = inventory.findIndex(item => item.name === product);
+  if (invIndex > -1) {
+    if (qty > inventory[invIndex].stock) {
+      alert(`Not enough stock for ${product}. Only ${inventory[invIndex].stock} left.`);
+      return;
     }
+  }
+
+  cart.push({ product, price, qty, total: price * qty });
+  document.getElementById('paymentMethod').innerText = payment;
+  updateCart();
+}
+function autoFillPrice() {
+  const productName = document.getElementById('product').value;
+  const product = inventory.find(item => item.name === productName);
+  if (product) {
+    document.getElementById('price').value = product.price;
+  } else {
+    document.getElementById('price').value = '';
+  }
+}
+
 
     function updateCart() {
   const tbody = document.querySelector('#cartTable tbody');
@@ -409,6 +478,26 @@ updateCart();
       cart.splice(index, 1);
       updateCart();
     }
+    function updateProductDropdown() {
+  const productSelect = document.getElementById('product');
+  productSelect.innerHTML = '<option value="">Select Product</option>';
+
+  // Build dropdown from inventory
+  inventory.forEach(item => {
+    productSelect.innerHTML += `<option value="${item.name}">${item.name}</option>`;
+  });
+
+  // 🧹 Clean up cart: remove products no longer in inventory
+  const validProductNames = inventory.map(item => item.name);
+  const originalCartLength = cart.length;
+  cart = cart.filter(item => validProductNames.includes(item.product));
+
+  if (cart.length !== originalCartLength) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart(); // refresh cart table
+  }
+}
+
 
     function displayInventory() {
       const tbody = document.querySelector('#inventoryTable tbody');
@@ -426,11 +515,21 @@ updateCart();
           </tr>
         `;
       });
+      // Populate product dropdown for sales
+const productSelect = document.getElementById('product');
+productSelect.innerHTML = '<option value="">Select Product</option>';
+inventory.forEach(item => {
+  productSelect.innerHTML += `<option value="${item.name}">${item.name}</option>`;
+});
+  // ✅ Always refresh product dropdown after displaying inventory
+  updateProductDropdown();
+
     }
 function checkout() {
   const tbody = document.querySelector('#receiptTable tbody');
   tbody.innerHTML = '';
   let total = 0;
+
   cart.forEach(item => {
     total += item.total;
     tbody.innerHTML += `<tr>
@@ -439,7 +538,19 @@ function checkout() {
       <td>${item.price.toFixed(2)}</td>
       <td>${item.total.toFixed(2)}</td>
     </tr>`;
+
+    // ✅ Reduce inventory stock
+    const invIndex = inventory.findIndex(invItem => invItem.name === item.product);
+    if (invIndex > -1) {
+      inventory[invIndex].stock -= item.qty;
+      if (inventory[invIndex].stock < 0) inventory[invIndex].stock = 0; // prevent negative
+    }
   });
+
+  // Save updated inventory
+  localStorage.setItem('inventory', JSON.stringify(inventory));
+  displayInventory();
+
   document.getElementById('receiptPayment').innerText = document.getElementById('payment').value;
   document.getElementById('receiptTotal').innerText = total.toFixed(2);
   document.getElementById('receiptDate').innerText = new Date().toLocaleString();
@@ -453,14 +564,15 @@ function checkout() {
   });
   localStorage.setItem('sales', JSON.stringify(sales));
 
-  // ✅ Use the new targeted print function
+  // ✅ Print the receipt
   printReceipt();
 
+  // Clear cart
   cart = [];
   updateCart();
   localStorage.removeItem('cart');
-
 }
+
 
 
     function viewSales() {
@@ -477,6 +589,15 @@ function checkout() {
         `;
       });
     }
+    function clearSales() {
+  if (confirm("Are you sure you want to clear all sales history?")) {
+    sales = [];
+    localStorage.removeItem('sales');
+    viewSales();
+    alert("Sales history cleared.");
+  }
+}
+
 
  function printReceipt() {
   document.body.classList.add("print-receipt");
